@@ -1,0 +1,366 @@
+{snippet fluidForm}
+	{form fluidForm class => 'fluidForm col-sm-' . $formWidth}
+		<div class="row">
+			<div class="col-sm-12">
+				<h2 n:if="isset($formName) && $formName != ''">
+					{$formName}
+				</h2>
+				{snippet flashes}
+					{ifset #flash-messages}
+						{include #flash-messages}
+					{else}
+						{if !empty($flashes)}
+							<div n:foreach="$flashes as $f" class='alert alert-{$f->type}'>
+								{switch $f->type}
+									{case "success"}
+									{var $icon = 'check'}
+									{case "warning"}
+									{var $icon = 'warning'}
+									{case "danger"}
+									{var $icon = 'warning'}
+									{default}
+									{var $icon = 'info-circle'}
+								{/switch}
+								<i class="fa fa-{$icon} fa-fw"></i> {$f->message}
+							</div>
+						{/if}
+					{/ifset}
+				{/snippet}
+				{snippet errors}
+					{if $control->getForm()->hasErrors()}
+						{foreach $control->getForm()->getErrors() as $err}
+							<div class="alert alert-danger" role="alert">
+								<i class="fa fa-times"></i> {$err}
+							</div>
+						{/foreach}
+					{/if}
+				{/snippet}
+			</div>
+			{snippet form}
+				<div class="row">
+				   {foreach $control->getForm()->getGroups() as $group}
+					<div n:if="$group->getOption('label') !== 'buttons'">
+					   {if $group->getOption('label')}
+						   <div n:class="'col-sm-' . ($group->getOption('cols') ?: '12')">
+								<div class="panel panel-primary">
+									<div class="panel-heading"> {$group->getOption('label')}</div>
+									<div class="panel-body">
+										{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
+								   </div>
+								</div>
+						   </div>
+						{else}
+							{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
+						{/if}
+					</div>
+					{/foreach}
+				</div>
+
+				{if $control->getForm()->getGroup('buttons')}
+					{include #form-base, (expand) ['components' => $control->getForm()->getGroup('buttons')->getControls(), 'group' => $control->getForm()->getGroup('buttons')]}
+				{/if}
+			{/snippet}
+		</div>
+		<div class="clearfix"></div>
+	{/form}
+{/snippet}
+
+
+{define form-base}
+	<div n:tag-if="$group->getOption('label') == 'buttons'" class="form-group form-buttons">
+	{var $firstFocused = false}
+	{foreach $components as $name => $input}
+		{if $input instanceof Nette\Forms\Container}
+			{include #form-container, (expand) ['controls' => $input->components, 'container' => $input]}
+		{else}
+			{var $params = [
+				control   => $input,
+				name      => $name,
+				attrs     => $input->control->attrs,
+				class     => (isset($input->control->attrs['class']) ? $input->control->attrs['class'] : false),
+				icon      => (isset($input->control->attrs['icon']) ? $input->control->attrs['icon'] : false),
+				cols      => (isset($input->control->attrs['cols']) ? $input->control->attrs['cols'] : $input->getOption('cols', null)),
+				inline    => (isset($input->control->attrs['inline']) ? $input->control->attrs['inline'] : false),
+				help      => (isset($input->control->attrs['help']) ? $input->control->attrs['help'] : $input->getOption('description', null)),
+				required  => $input->getRules()->isRequired(),
+				autofocus => !$input instanceof Nette\Forms\Controls\HiddenField && !$firstFocused && $control->getFluidForm()->getAutoFocus() ? 'autofocus' : ''
+			]}
+
+			{if $params[autofocus]}{var $firstFocused = true}{/if}
+			{include #form-control, (expand) ['name' => $name, 'control' => $input, 'params' => $params]}
+		{/if}
+	{/foreach}
+	</div>
+{/define}
+
+
+{define form-container}
+	<div class="col-sm-12">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="row">
+					{include #form-base, (expand) ['components' => $controls]}
+				</div>
+			</div>
+		</div>
+	</div>
+{/define}
+
+
+{define form-control}
+	{if $control instanceof Nette\Forms\Controls\CheckboxList}
+		{ifset #input-checkboxlist-$name}
+			{include #"input-checkboxlist-$name", (expand) $params}
+		{else}
+			{include #input-checkboxlist, (expand) $params}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\RadioList}
+		{ifset #input-radiolist-$name}
+			{include #"input-radiolist-$name", (expand) $params}
+		{else}
+			{include #input-radiolist, (expand) $params}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\TextInput }
+		{if $params['inline']}
+			{ifset #input-inline-text-$name}
+				{include #"input-text-$name", (expand) $params}
+			{else}
+				{include #input-inline-text, (expand) $params}
+			{/ifset}
+		{else}
+			{ifset #input-text-$name}
+				{include #"input-text-$name", (expand) $params}
+			{else}
+				{include #input-text, (expand) $params}
+			{/ifset}
+		{/if}
+	{elseif $control instanceof Nette\Forms\Controls\TextArea}
+		{ifset #input-textarea-$name}
+			{include #"input-textarea-$name", (expand) $params}
+		{else}
+			{include #input-textarea, (expand) $params}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\SubmitButton}
+		{ifset #input-submit-$name}
+			{include #"input-submit-$name", (expand) $params}
+		{else}
+			{include #input-submit, (expand) $params}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\Checkbox}
+		{ifset #input-checkbox-$name}
+			{include #"input-checkbox-$name", (expand) $params}
+		{else}
+			{include #input-checkbox, (expand) $params}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\SelectBox}
+		{ifset #input-select-$name}
+			 {include #"input-select-$name", (expand) $params}
+		{else}
+			{if isset($params['attrs']['buttons']) && $params['attrs']['buttons']}
+				{include #input-select-buttons, (expand) $params}
+			{else}
+				{include #input-select, (expand) $params}
+			{/if}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\MultiSelectBox}
+		{ifset #input-multi-select-$name}
+			{include #"input-multi-select-$name", (expand) $params}
+		{else}
+			{include #input-select, (expand) $params, multi => true}
+		{/ifset}
+	{elseif $control instanceof Nette\Forms\Controls\HiddenField}
+		{input $control}
+	{elseif $control instanceof Nette\Forms\Controls\UploadControl}
+		{ifset #input-upload-$name}
+			{include #"input-upload-$name", (expand) $params}
+		{else}
+			{include #input-upload, (expand) $params}
+		{/ifset}
+	{/if}
+{/define}
+
+
+{define input-text}
+	<div class="form-group col-sm-{$cols ?: '12'}">
+		{label $control}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<div class="{$icon ? 'input-group' : 'form-group'}">
+			<input n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}>
+			{if $icon}
+				{include #input-group-addon (expand) ['icon' => $icon]}
+			{/if}
+		</div>
+		{if $help}
+			{include #help-block (expand) ['help' => $help]}
+		{/if}
+	</div>
+{/define}
+
+
+{define input-select}
+	<div class="form-group col-sm-{$cols ?: '12'}">
+		{label $control}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<div class="{$icon ? 'input-group' : 'form-group'}">
+			<select n:name="$control" class="{$class ?: 'form-control form-select'}" {$autofocus|noescape}></select>
+			{if $icon}
+				{include #input-group-addon (expand) ['icon' => $icon]}
+			{/if}
+		</div>
+		{if $help}
+			{include #help-block (expand) ['help' => $help]}
+		{/if}
+	</div>
+{/define}
+
+
+{define input-inline-text}
+	<div class="form-group col-sm-12">
+		{label $control class => 'nopadding col-sm-' . (12 - $cols)}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<div class="col-sm-{$cols} {$icon ? 'input-group' : 'form-group'}">
+			<input n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}>
+			{if $icon}
+				{include #input-group-addon (expand) ['icon' => $icon]}
+			{/if}
+		</div>
+		{if $help}
+			<div class="col-sm-offset-{(12 - $cols)} col-sm-{$cols}">
+				{include #help-block (expand) ['help' => $help]}
+			</div>
+		{/if}
+	</div>
+{/define}
+
+
+{define input-textarea}
+	<div class="form-group col-sm-{$cols ?: '12'}">
+		{label $control}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<textarea n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}></textarea>
+		{if $help}
+			{include #help-block (expand) ['help' => $help]}
+		{/if}
+	</div>
+{/define}
+
+
+{define input-submit}
+	<input n:name="$control" class="{$class ?: 'btn btn-primary'}" n:attr="title => $help">
+{/define}
+
+
+{define input-group-addon}
+	<span class="input-group-addon">
+		<i class="fa fa-{$icon} fa-fw"></i>
+	</span>
+{/define}
+
+
+{define input-checkbox}
+	<div class="form-group col-sm-{$cols ?: '12'}"> {* TODO: attributes *}
+		<div class="checkbox">
+			<label>
+				<input n:name="$control">
+				{$control->caption}
+			</label>
+		</div>
+	</div>
+{/define}
+
+
+{define input-checkboxlist}
+	<div class="form-group col-sm-{$cols ?: '12'}"> {* TODO: attributes *}
+		<b>{$control->caption}</b>
+		{foreach $control->items as $key => $label}
+			<div class="checkbox">
+				{label $control:$key}
+					{input $control:$key}
+					{$label}
+				{/label}
+			</div>
+		{/foreach}
+	</div>
+{/define}
+
+
+{define input-radiolist}
+	<div class="form-group col-sm-{$cols ?: '12'}"> {* TODO: attributes *}
+		<b>{$control->caption}</b>
+		{foreach $control->items as $key => $label}
+			<div class="radio">
+				{label $control:$key}
+					{input $control:$key}
+					{$label}
+				{/label}
+			</div>
+		{/foreach}
+	</div>
+{/define}
+
+
+{define input-upload}
+	<div class="form-group col-sm-{$cols ?: '12'}">
+		{label $control}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<input n:name="$control" class="form-control" {$autofocus|noescape}>
+		{if $help}
+			{include #help-block (expand) ['help' => $help]}
+		{/if}
+	</div>
+{/define}
+
+
+{define input-select-buttons}
+	<div class="form-group col-sm-{$cols ?: '12'}">
+		{label $control}
+			{if $required}
+				<span class="text-danger">{$control->caption} *</span>
+			{else}
+				{$control->caption}
+			{/if}
+		{/label}
+		<br />
+		{foreach $control->getItems() as $icon}
+			{if !$control->isRequired() && $icon == "empty"}
+				<a data-toggle="tooltip" title="Bez ikony" style="margin-bottom: 5px;" class="btn btn-default btn-xs fluid-select-buttons active" data-icon="{$icon}"><i class="fa fa-diamond fa-2x fa-fw" style="color: rgba(0, 0, 0, 0);"></i></a>
+			{else}
+				<a style="margin-bottom: 5px;" n:class="btn, btn-default, btn-xs, fluid-select-buttons, $control->getValue() == $icon ? active" data-icon="{$icon}"><i class="fa fa-{$icon} fa-2x fa-fw"></i></a>
+			{/if}
+		{/foreach}
+		{input $control class => 'form-control', style => 'display: none', data-control => 'buttons'}
+		{if $help}
+			{include #help-block (expand) ['help' => $help]}
+		{/if}
+	</div>
+{/define}
+
+
+{define help-block}
+	<p class="help-block"><i class="fa fa-info-circle"></i> {$help}</p>
+{/define}
