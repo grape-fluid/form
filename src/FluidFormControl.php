@@ -25,10 +25,11 @@ class FluidFormControl extends Control
 
 	/**
 	 * @param $defaultValues
+	 * @param bool $mergeWithPrevious
 	 */
-	public function setDefaults($defaultValues)
+	public function setDefaults($defaultValues, $mergeWithPrevious = false)
 	{
-		$this->fluidForm->setDefaultValues($defaultValues);
+		$this->fluidForm->setDefaultValues($defaultValues, $mergeWithPrevious);
 	}
 
 
