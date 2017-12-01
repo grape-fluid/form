@@ -1,4 +1,5 @@
-{snippet fluidForm}
+<div n:snippet="fluidForm" n:class="$formWidth == 12 ? row">
+	{* @todo: sirku formulare by si mel ridit kazdy sam zvenci - sirky mohou byt ruzne na ruznych mistech (znovupouzitelny formular) *}
 	{form fluidForm class => 'fluidForm col-sm-' . $formWidth}
 		<div class="row">
 			<div class="col-sm-12">
@@ -36,34 +37,34 @@
 					{/if}
 				{/snippet}
 			</div>
-			{snippet form}
+			<div n:snippet="form" class="col-sm-12">
 				<div class="row">
-				   {foreach $control->getForm()->getGroups() as $group}
-					<div n:if="$group->getOption('label') !== 'buttons'">
-					   {if $group->getOption('label')}
-						   <div n:class="'col-sm-' . ($group->getOption('cols') ?: '12')">
-								<div class="panel panel-primary">
-									<div class="panel-heading"> {$group->getOption('label')}</div>
-									<div class="panel-body">
-										{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
-								   </div>
+					{foreach $control->getForm()->getGroups() as $group}
+						{if $group->getOption('label') !== 'buttons'}
+							{if $group->getOption('label')}
+								<div n:class="'col-sm-' . ($group->getOption('cols') ?: '12')">
+									<div class="panel panel-primary">
+										<div class="panel-heading"> {$group->getOption('label')}</div>
+										<div class="panel-body">
+											{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
+										</div>
+									</div>
 								</div>
-						   </div>
-						{else}
-							{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
+							{else}
+								{include #form-base, (expand) ['components' => $group->getControls(), 'group' => $group]}
+							{/if}
 						{/if}
-					</div>
 					{/foreach}
 				</div>
 
 				{if $control->getForm()->getGroup('buttons')}
 					{include #form-base, (expand) ['components' => $control->getForm()->getGroup('buttons')->getControls(), 'group' => $control->getForm()->getGroup('buttons')]}
 				{/if}
-			{/snippet}
+			</div>
 		</div>
 		<div class="clearfix"></div>
 	{/form}
-{/snippet}
+</div>
 
 
 {define form-base}
