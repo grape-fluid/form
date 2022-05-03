@@ -78,7 +78,7 @@
 				control   => $input,
 				name      => $name,
 				attrs     => $input->control->attrs,
-				class     => (isset($input->control->attrs['class']) ? $input->control->attrs['class'] : false),
+				cssClass  => (isset($input->control->attrs['class']) ? $input->control->attrs['class'] : false),
 				icon      => (isset($input->control->attrs['icon']) ? $input->control->attrs['icon'] : false),
 				cols      => (isset($input->control->attrs['cols']) ? $input->control->attrs['cols'] : $input->getOption('cols', null)),
 				inline    => (isset($input->control->attrs['inline']) ? $input->control->attrs['inline'] : false),
@@ -191,7 +191,7 @@
 			{/if}
 		{/label}
 		<div class="{$icon ? 'input-group' : 'form-group'}">
-			<input n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}>
+			<input n:name="$control" class="{$cssClass ?: 'form-control'}" {$autofocus|noescape}>
 			{if $icon}
 				{include #input-group-addon (expand) ['icon' => $icon]}
 			{/if}
@@ -213,7 +213,7 @@
 			{/if}
 		{/label}
 		<div class="{$icon ? 'input-group' : 'form-group'}">
-			<select n:name="$control" class="{$class ?: 'form-control form-select'}" {$autofocus|noescape}></select>
+			<select n:name="$control" class="{$cssClass ?: 'form-control form-select'}" {$autofocus|noescape}></select>
 			{if $icon}
 				{include #input-group-addon (expand) ['icon' => $icon]}
 			{/if}
@@ -235,7 +235,7 @@
 			{/if}
 		{/label}
 		<div class="col-sm-{$cols} {$icon ? 'input-group' : 'form-group'}">
-			<input n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}>
+			<input n:name="$control" class="{$cssClass ?: 'form-control'}" {$autofocus|noescape}>
 			{if $icon}
 				{include #input-group-addon (expand) ['icon' => $icon]}
 			{/if}
@@ -258,7 +258,7 @@
 				{$control->caption}
 			{/if}
 		{/label}
-		<textarea n:name="$control" class="{$class ?: 'form-control'}" {$autofocus|noescape}></textarea>
+		<textarea n:name="$control" class="{$cssClass ?: 'form-control'}" {$autofocus|noescape}></textarea>
 		{if $help}
 			{include #help-block (expand) ['help' => $help]}
 		{/if}
@@ -267,7 +267,7 @@
 
 
 {define input-submit}
-	<input n:name="$control" class="{$class ?: 'btn btn-primary'}" n:attr="title => $help">
+	<input n:name="$control" class="{$cssClass ?: 'btn btn-primary'}" n:attr="title => $help">
 {/define}
 
 
