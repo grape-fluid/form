@@ -18,7 +18,6 @@ class FluidFormControl extends Control
 
 	public function __construct(FluidForm $fluidForm)
 	{
-		parent::__construct();
 		$this->fluidForm = $fluidForm;
 	}
 
@@ -80,17 +79,30 @@ class FluidFormControl extends Control
 	{
 		$this->template->fluidForm = (__DIR__ . "/FluidForm.latte");
 
-		$class = new \Nette\Reflection\ClassType($this->fluidForm);
+		$reflection = new \ReflectionObject($this->fluidForm);
+		$docComment = $reflection->getDocComment();
+		$name       = '';
+		$annot      = '';
 
-		$this->template->formName = $class->hasAnnotation("name") ? $class->getAnnotation("name") : "";
+		if ($docComment) {
+			if (preg_match('/@name\s+(\S+)/', $docComment, $matches)) {
+				$name = $matches[1]; ;// @todo check
+			}
 
-		if ($class->hasAnnotation("width") && is_int($annot = $class->getAnnotation("width"))) {
+			if (preg_match('/@width\s+(\S+)/', $docComment, $matches)) {
+				$annot = $matches[1]; ;// @todo check
+			}
+		}
+
+		$this->template->formName = $this->name;
+
+		if ($annot && is_int($annot)) {
 			$this->template->formWidth = ($annot < 1 ? 1 : $annot);
 		} else {
 			$this->template->formWidth = 12;
 		}
 
-		$template = str_replace(".php", ".latte", $class->getFileName());
+		$template = str_replace(".php", ".latte", $reflection->getFileName());
 
 		if (file_exists($template)) {
 			$this->template->setFile($template);

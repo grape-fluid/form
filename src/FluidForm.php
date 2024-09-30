@@ -176,19 +176,19 @@ abstract class FluidForm
 
 	public function onBeforeBuildEvent()
 	{
-		$this->dispatcher->dispatch(self::EVENT_BEFORE_BUILD, new FluidFormEvent($this));
+		$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_BEFORE_BUILD);
 	}
 
 
 	public function onAfterBuildEvent()
 	{
-		$this->dispatcher->dispatch(self::EVENT_AFTER_BUILD, new FluidFormEvent($this));
+		$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_AFTER_BUILD);
 	}
 
 
 	public function onAfterAddSubmitButtonEvent()
 	{
-		$this->dispatcher->dispatch(self::EVENT_AFTER_ADD_SUBMIT_BUTTON, new FluidFormEvent($this));
+		$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_AFTER_ADD_SUBMIT_BUTTON);
 	}
 
 
@@ -198,7 +198,7 @@ abstract class FluidForm
 	 */
 	public function onSubmitEvent(Control $control, Form $form)
 	{
-		$this->dispatcher->dispatch(self::EVENT_ON_SUBMIT, new FluidFormEvent($this));
+		$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_ON_SUBMIT);
 	}
 
 
@@ -208,7 +208,7 @@ abstract class FluidForm
 	 */
 	public function onSetDefaults(Form $form, $defaults)
 	{
-		$this->dispatcher->dispatch(self::EVENT_ON_SET_DEFAULTS, new FluidFormEvent($this, $defaults));
+		$this->dispatcher->dispatch(new FluidFormEvent($this, $defaults), self::EVENT_ON_SET_DEFAULTS);
 	}
 
 
@@ -220,7 +220,7 @@ abstract class FluidForm
 	{
 		$this->submit($control, $form);
 		if ($form->isValid()) {
-			$this->dispatcher->dispatch(self::EVENT_ON_SUCCESS, new FluidFormEvent($this));
+			$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_ON_SUCCESS);
 			$this->afterSucceedSubmit($control, $form);
 		}
 	}
@@ -236,7 +236,7 @@ abstract class FluidForm
 			$control->redrawControl('errors');
 		}
 
-		$this->dispatcher->dispatch(self::EVENT_ON_ERROR, new FluidFormEvent($this));
+		$this->dispatcher->dispatch(new FluidFormEvent($this), self::EVENT_ON_ERROR);
 	}
 
 

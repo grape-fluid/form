@@ -80,9 +80,9 @@
 				attrs     => $input->control->attrs,
 				cssClass  => (isset($input->control->attrs['class']) ? $input->control->attrs['class'] : false),
 				icon      => (isset($input->control->attrs['icon']) ? $input->control->attrs['icon'] : false),
-				cols      => (isset($input->control->attrs['cols']) ? $input->control->attrs['cols'] : $input->getOption('cols', null)),
+				cols      => (isset($input->control->attrs['cols']) ? $input->control->attrs['cols'] : $input->getOption('cols') ?? null),
 				inline    => (isset($input->control->attrs['inline']) ? $input->control->attrs['inline'] : false),
-				help      => (isset($input->control->attrs['help']) ? $input->control->attrs['help'] : $input->getOption('description', null)),
+				help      => (isset($input->control->attrs['help']) ? $input->control->attrs['help'] : $input->getOption('description') ?? null),
 				required  => $input->getRules()->isRequired(),
 				autofocus => !$input instanceof Nette\Forms\Controls\HiddenField && !$firstFocused && $control->getFluidForm()->getAutoFocus() ? 'autofocus' : ''
 			]}
@@ -110,51 +110,51 @@
 
 {define form-control}
 	{if $control instanceof Nette\Forms\Controls\CheckboxList}
-		{ifset #input-checkboxlist-$name}
+		{ifset #input-checkboxlist-{$name}}
 			{include #"input-checkboxlist-$name", (expand) $params}
 		{else}
 			{include #input-checkboxlist, (expand) $params}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\RadioList}
-		{ifset #input-radiolist-$name}
+		{ifset #input-radiolist-{$name}}
 			{include #"input-radiolist-$name", (expand) $params}
 		{else}
 			{include #input-radiolist, (expand) $params}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\TextInput }
 		{if $params['inline']}
-			{ifset #input-inline-text-$name}
+			{ifset #input-inline-text-{$name}}
 				{include #"input-text-$name", (expand) $params}
 			{else}
 				{include #input-inline-text, (expand) $params}
 			{/ifset}
 		{else}
-			{ifset #input-text-$name}
+			{ifset #input-text-{$name}}
 				{include #"input-text-$name", (expand) $params}
 			{else}
 				{include #input-text, (expand) $params}
 			{/ifset}
 		{/if}
 	{elseif $control instanceof Nette\Forms\Controls\TextArea}
-		{ifset #input-textarea-$name}
+		{ifset #input-textarea-{$name}}
 			{include #"input-textarea-$name", (expand) $params}
 		{else}
 			{include #input-textarea, (expand) $params}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\SubmitButton}
-		{ifset #input-submit-$name}
+		{ifset #input-submit-{$name}}
 			{include #"input-submit-$name", (expand) $params}
 		{else}
 			{include #input-submit, (expand) $params}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\Checkbox}
-		{ifset #input-checkbox-$name}
+		{ifset #input-checkbox-{$name}}
 			{include #"input-checkbox-$name", (expand) $params}
 		{else}
 			{include #input-checkbox, (expand) $params}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\SelectBox}
-		{ifset #input-select-$name}
+		{ifset #input-select-{$name}}
 			 {include #"input-select-$name", (expand) $params}
 		{else}
 			{if isset($params['attrs']['buttons']) && $params['attrs']['buttons']}
@@ -164,7 +164,7 @@
 			{/if}
 		{/ifset}
 	{elseif $control instanceof Nette\Forms\Controls\MultiSelectBox}
-		{ifset #input-multi-select-$name}
+		{ifset #input-multi-select-{$name}}
 			{include #"input-multi-select-$name", (expand) $params}
 		{else}
 			{include #input-select, (expand) $params, multi => true}
@@ -172,7 +172,7 @@
 	{elseif $control instanceof Nette\Forms\Controls\HiddenField}
 		{input $control}
 	{elseif $control instanceof Nette\Forms\Controls\UploadControl}
-		{ifset #input-upload-$name}
+		{ifset #input-upload-{$name}}
 			{include #"input-upload-$name", (expand) $params}
 		{else}
 			{include #input-upload, (expand) $params}
