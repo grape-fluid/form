@@ -5,7 +5,7 @@ namespace Grapesc\GrapeFluid\FluidFormControl;
 use Nette\Application\UI\Form;
 use Nette\ArrayHash;
 use Nette\Database\IRow;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 
 /**
