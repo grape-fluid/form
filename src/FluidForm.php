@@ -310,7 +310,7 @@ abstract class FluidForm
 	 */
 	public function isEditMode()
 	{
-		$values = $this->getForm()->getValues(true);
+		$values = $this->getForm()->getUntrustedValues();
 		return (boolean) $this->editId || (isset($values['id']) AND $values['id'] !== "");
 	}
 
