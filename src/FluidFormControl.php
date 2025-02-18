@@ -94,7 +94,7 @@ class FluidFormControl extends Control
 			}
 		}
 
-		$this->template->formName = $this->name;
+		$this->template->formName = $name;
 
 		if ($annot && is_int($annot)) {
 			$this->template->formWidth = ($annot < 1 ? 1 : $annot);
